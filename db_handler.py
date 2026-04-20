@@ -89,8 +89,9 @@ class DBConnection:
                 WHERE table_schema = 'main'
                 AND table_name = ?
                 """, (table_name,))
+            table_df = tables.get("result", pd.DataFrame())
 
-            if inplace or tables.empty:
+            if inplace or table_df.empty:
                 # Replace table or create if doesn't exist;
                 self.connection.register("tmp_df", df)
                 self.connection.sql(f"DROP TABLE IF EXISTS {table_name}")
