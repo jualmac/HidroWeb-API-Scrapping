@@ -34,6 +34,7 @@ class Common_Hidroweb_API():
         self.token = get_auth()
         self.inplace = True
         self.logger = logger
+        self.db_handler = DBConnection()
 
     def collect_endpoint_data(
         self,
@@ -79,16 +80,10 @@ class Common_Hidroweb_API():
             return
 
         df = pd.DataFrame(payload["items"])
-        db_handler = DBConnection()
-        db_handler.write(df, table_name, inplace=inplace)
+        self.db_handler.write(df, table_name, inplace=inplace)
         active_logger.info("Data collected from '%s' and saved to '%s'", url, table_name)
 
     # Endpoints:
-    def HidrosatSerieDados(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidrosatSerieDados/v1",
-            table_name="HidrosatSerieDados",
-        )
     def HidrosatInventarioEstacoes(self):
         self.collect_endpoint_data(
             url=BASE_URL+"HidrosatInventarioEstacoes/v1",
@@ -104,51 +99,6 @@ class Common_Hidroweb_API():
             url=BASE_URL+"HidroSubBacia/v1",
             table_name="HidroSubBacia",
         )
-    def HidroSerieVazao(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieVazao/v1",
-            table_name="HidroSerieVazao",
-        )
-    def HidroSerieSedimentos(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieSedimentos/v1",
-            table_name="HidroSerieSedimentos",
-        )
-    def HidroSerieResumoDescarga(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieResumoDescarga/v1",
-            table_name="HidroSerieResumoDescarga",
-        )
-    def HidroSerieQA(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieQA/v1",
-            table_name="HidroSerieQA",
-        )
-    def HidroSeriePerfilTransversal(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSeriePerfilTransversal/v1",
-            table_name="HidroSeriePerfilTransversal",
-        )
-    def HidroSerieGranulometria(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieGranulometria/v1",
-            table_name="HidroSerieGranulometria",
-        )
-    def HidroSerieCurvaDescarga(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieCurvaDescarga/v1",
-            table_name="HidroSerieCurvaDescarga",
-        )
-    def HidroSerieCotas(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieCotas/v1",
-            table_name="HidroSerieCotas",
-        )
-    def HidroSerieChuva(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroSerieChuva/v1",
-            table_name="HidroSerieChuva",
-        )
     def HidroRio(self):
         self.collect_endpoint_data(
             url=BASE_URL+"HidroRio/v1",
@@ -160,10 +110,15 @@ class Common_Hidroweb_API():
             table_name="HidroMunicipio",
         )
     def HidroInventarioEstacoes(self):
-        self.collect_endpoint_data(
-            url=BASE_URL+"HidroInventarioEstacoes/v1",
-            table_name="HidroInventarioEstacoes",
-        )
+        # Get all stations for all Federative regions;
+        ufs = self.db_handler.run(query="SELECT DISTINCT Estado_Sigla FROM HidroUF").get("result", pd.DataFrame()).values
+        for uf in ufs:
+            self.collect_endpoint_data(
+                url=BASE_URL+"HidroInventarioEstacoes/v1",
+                params = {"Unidade Federativa": uf},
+                table_name="HidroInventarioEstacoes",
+                inplace=False
+            )
     def HidroEntidade(self):
         self.collect_endpoint_data(
             url=BASE_URL+"HidroEntidade/v1",
@@ -181,19 +136,9 @@ def get_common_endpoint_map(api: Common_Hidroweb_API) -> dict[str, Callable[[], 
     Return a stable name -> bound method mapping for common endpoints.
     """
     return {
-        "HidrosatSerieDados": api.HidrosatSerieDados,
-        "HidrosatInventarioEstacoes": api.HidrosatInventarioEstacoes,
+        # "HidrosatInventarioEstacoes": api.HidrosatInventarioEstacoes, #BROKEN ENDPOINT
         "HidroUF": api.HidroUF,
         "HidroSubBacia": api.HidroSubBacia,
-        "HidroSerieVazao": api.HidroSerieVazao,
-        "HidroSerieSedimentos": api.HidroSerieSedimentos,
-        "HidroSerieResumoDescarga": api.HidroSerieResumoDescarga,
-        "HidroSerieQA": api.HidroSerieQA,
-        "HidroSeriePerfilTransversal": api.HidroSeriePerfilTransversal,
-        "HidroSerieGranulometria": api.HidroSerieGranulometria,
-        "HidroSerieCurvaDescarga": api.HidroSerieCurvaDescarga,
-        "HidroSerieCotas": api.HidroSerieCotas,
-        "HidroSerieChuva": api.HidroSerieChuva,
         "HidroRio": api.HidroRio,
         "HidroMunicipio": api.HidroMunicipio,
         "HidroInventarioEstacoes": api.HidroInventarioEstacoes,

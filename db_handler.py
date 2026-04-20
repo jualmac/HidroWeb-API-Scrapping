@@ -99,9 +99,38 @@ class DBConnection:
                 self.connection.unregister("tmp_df")
                 self.connection.table(f"{table_name}").show()
             else:
-                # Append data to existing table;
                 self.connection.register("tmp_df", df)
-                self.connection.sql(f"INSERT INTO {table_name} SELECT * FROM tmp_df")
+
+                # Build an append statement aligned to the target table schema instead of relying on positional INSERT *;
+                target_columns_info = self.connection.execute(
+                    f"PRAGMA table_info('{table_name}')"
+                ).fetchall()
+                target_columns = [row[1] for row in target_columns_info]
+                target_types = {row[1]: row[2] for row in target_columns_info}
+                source_columns = set(df.columns.tolist())
+
+                # Quote identifiers to safely handle special characters and avoid SQL parser issues on column names;
+                quoted_target_columns = [f"\"{column_name.replace('\"', '\"\"')}\"" for column_name in target_columns]
+                cast_expressions: list[str] = []
+
+                # Each target column is populated by name with TRY_CAST to avoid hard-fail on type drifts across API batches;
+                for column_name in target_columns:
+                    escaped_column_name = column_name.replace("\"", "\"\"")
+                    target_type = target_types[column_name]
+                    if column_name in source_columns:
+                        cast_expressions.append(
+                            f"TRY_CAST(\"{escaped_column_name}\" AS {target_type}) AS \"{escaped_column_name}\""
+                        )
+                    else:
+                        cast_expressions.append(
+                            f"CAST(NULL AS {target_type}) AS \"{escaped_column_name}\""
+                        )
+
+                insert_query = (
+                    f"INSERT INTO {table_name} ({', '.join(quoted_target_columns)}) "
+                    f"SELECT {', '.join(cast_expressions)} FROM tmp_df"
+                )
+                self.connection.execute(insert_query)
                 self.connection.unregister("tmp_df")
                 self.connection.table(f"{table_name}").show()
             logger.info("Inserted data into %s", table_name)
