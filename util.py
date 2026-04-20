@@ -15,7 +15,16 @@ import subprocess
 import shutil
 from datetime import datetime, timedelta
 from typing import Callable, Iterator
-import requests
+
+########################################################################################################################
+#                                                                  
+# CONSTANTS
+#
+########################################################################################################################
+# START_DATE = '2018-08-01'
+START_DATE = '2026-01-01'
+END_DATE = '2026-02-01'
+BASE_URL = "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas/"
 
 ########################################################################################################################
 #                                                                  
@@ -50,7 +59,7 @@ def configure_logging(logger_name: str | None = None, log_file: str = "logs/pipe
         root_logger.addHandler(stream_handler)
 
     return logging.getLogger(logger_name or __name__)
-    
+
 
 def is_valid(number):
     if (
@@ -175,13 +184,6 @@ def is_gpu_available() -> bool:
     except (subprocess.CalledProcessError, FileNotFoundError):
         return False
 
-########################################################################################################################
-#                                                                  
-# CONSTANTS
-#
-########################################################################################################################
-START_DATE = '2018-08-01'
-END_DATE = '2025-10-05'
 
 ########################################################################################################################
 #                                                                  
