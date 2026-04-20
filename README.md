@@ -72,3 +72,7 @@ Controle do modo de escrita no banco:
 * "/EstacoesTelemetricas/HidroInventarioEstacoes/v1": Inventário completo de estações cadastradas na base Hidro. Deve ser informado, ao menos, um dos seguintes filtros: Cód. Estação, Cód. Bacia ou UF.
 * "/EstacoesTelemetricas/HidroEntidade/v1": Lista de entidades cadastradas na base Hidro. As entidades são utilizadas para caracterizar o responsável e operador das estações. Não há limitação de busca por requisição.
 * "/EstacoesTelemetricas/HidroBacia/v1": Lista de bacias hidrográficas cadastradas na base Hidro. Não há limitação de busca por requisição.
+
+# TODO:
+* Testar todos endpoints;
+* Corrigir HEADERS;
