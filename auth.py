@@ -4,7 +4,7 @@ import logging
 import pandas as pd
 from dotenv import load_dotenv
 import requests
-from util import configure_logging
+from util import BASE_URL, configure_logging
 
 logger = configure_logging(__name__)
 
@@ -17,8 +17,8 @@ def get_auth() -> str:
     '''
     Gets the proper token necessary for the other API's from the HidroWeb service
     '''
-    # Base URL;
-    url = "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas/OAUth/v1"
+    # Define URL;
+    url = BASE_URL + "OAUth/v1"
 
     headers = {
         'accept': '*/*',
