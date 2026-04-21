@@ -9,6 +9,8 @@ Os scripts dividem as datas de coletas (nos endpoints na qual a mesma é relevan
 
 ## 1) Endpoints comuns (sem station code)
 
+Observação: ao iniciar qualquer execução, o script garante automaticamente a criação do arquivo DuckDB (`data/nivel_duck.db`) quando ele ainda não existir.
+
 Executa todos os endpoints comuns:
 
 `python3 endpoint_common.py --endpoints all`
@@ -72,7 +74,3 @@ Controle do modo de escrita no banco:
 * "/EstacoesTelemetricas/HidroInventarioEstacoes/v1": Inventário completo de estações cadastradas na base Hidro. Deve ser informado, ao menos, um dos seguintes filtros: Cód. Estação, Cód. Bacia ou UF.
 * "/EstacoesTelemetricas/HidroEntidade/v1": Lista de entidades cadastradas na base Hidro. As entidades são utilizadas para caracterizar o responsável e operador das estações. Não há limitação de busca por requisição.
 * "/EstacoesTelemetricas/HidroBacia/v1": Lista de bacias hidrográficas cadastradas na base Hidro. Não há limitação de busca por requisição.
-
-# TODO:
-* Testar todos endpoints;
-* Corrigir HEADERS;

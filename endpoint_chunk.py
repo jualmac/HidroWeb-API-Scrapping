@@ -197,7 +197,168 @@ class Chunk_Hidroweb_API():
         db_handler.write(combined_df, table_name, inplace=inplace)
         active_logger.info("Collected %s records and saved to '%s'", len(combined_df), table_name)
 
-    # These endpoints requires station and date-range params, so we route them through chunked collection;
+    # These endpoints require station and date-range params, so we route them through chunked collection;
+    def HidrosatSerieDados(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidrosatSerieDados/v1",
+            extra_params={"Tipo Filtro Data": "DATA_LEITURA"},
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidrosatSerieDados",
+            inplace=inplace,
+        )
+
+    def HidroSerieVazao(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieVazao/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieVazao",
+            inplace=inplace,
+        )
+
+    def HidroSerieSedimentos(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieSedimentos/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieSedimentos",
+            inplace=inplace,
+        )
+
+    def HidroSerieResumoDescarga(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieResumoDescarga/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieResumoDescarga",
+            inplace=inplace,
+        )
+
+    def HidroSerieQA(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieQA/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieQA",
+            inplace=inplace,
+        )
+
+    def HidroSeriePerfilTransversal(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSeriePerfilTransversal/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSeriePerfilTransversal",
+            inplace=inplace,
+        )
+
+    def HidroSerieGranulometria(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieGranulometria/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieGranulometria",
+            inplace=inplace,
+        )
+
+    def HidroSerieCurvaDescarga(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieCurvaDescarga/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieCurvaDescarga",
+            inplace=inplace,
+        )
+
+    def HidroSerieCotas(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieCotas/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieCotas",
+            inplace=inplace,
+        )
+
+    def HidroSerieChuva(
+        self,
+        station_code: str,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        inplace: bool | None = None,
+    ):
+        self.collect_chunked_endpoint_data(
+            url=BASE_URL+"HidroSerieChuva/v1",
+            station_code=station_code,
+            start_date=start_date,
+            end_date=end_date,
+            table_name="HidroSerieChuva",
+            inplace=inplace,
+        )
+
     def HidroinfoanaSerieTelemetricaDetalhada_v1(
         self,
         station_code: str,
@@ -270,6 +431,16 @@ def get_chunk_endpoint_map(
     Return a stable name -> bound method mapping for chunked endpoints.
     """
     return {
+        "HidrosatSerieDados": api.HidrosatSerieDados,
+        "HidroSerieVazao": api.HidroSerieVazao,
+        "HidroSerieSedimentos": api.HidroSerieSedimentos,
+        "HidroSerieResumoDescarga": api.HidroSerieResumoDescarga,
+        "HidroSerieQA": api.HidroSerieQA,
+        "HidroSeriePerfilTransversal": api.HidroSeriePerfilTransversal,
+        "HidroSerieGranulometria": api.HidroSerieGranulometria,
+        "HidroSerieCurvaDescarga": api.HidroSerieCurvaDescarga,
+        "HidroSerieCotas": api.HidroSerieCotas,
+        "HidroSerieChuva": api.HidroSerieChuva,
         "HidroinfoanaSerieTelemetricaDetalhada_v1": api.HidroinfoanaSerieTelemetricaDetalhada_v1,
         "HidroinfoanaSerieTelemetricaDetalhada_v2": api.HidroinfoanaSerieTelemetricaDetalhada_v2,
         "HidroinfoanaSerieTelemetricaAdotada_v1": api.HidroinfoanaSerieTelemetricaAdotada_v1,

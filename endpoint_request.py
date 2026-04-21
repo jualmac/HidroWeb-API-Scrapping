@@ -26,6 +26,47 @@ logger = configure_logging(__name__)
 # FUNCTIONS
 #
 ########################################################################################################################
+def _redact_headers_for_log(headers: dict | None) -> dict[str, str]:
+    """
+    Copy headers for logging with Authorization tokens redacted;
+    """
+    if not headers:
+        return {}
+    safe: dict[str, str] = {}
+    for header_name, header_value in headers.items():
+        if header_name.lower() == "authorization":
+            safe[header_name] = "Bearer <redacted>"
+        else:
+            safe[header_name] = str(header_value)
+    return safe
+
+
+def log_outgoing_http_request(
+    *,
+    active_logger: logging.Logger,
+    method: str,
+    url: str,
+    params: dict | None,
+    headers: dict | None,
+) -> None:
+    """
+    Log the outgoing HTTP request: method, full URL (including query string for GET), params, and redacted headers;
+    """
+    method_upper = method.upper()
+    try:
+        prepared = requests.Request(method_upper, url, params=params or {}).prepare()
+        full_url = prepared.url
+    except Exception as log_error:
+        active_logger.warning("Could not prepare URL for logging: %s", log_error)
+        full_url = url
+    active_logger.info("Outgoing HTTP request: %s %s", method_upper, full_url)
+    if params:
+        active_logger.info("Request query parameters (decoded keys/values): %s", params)
+    safe_headers = _redact_headers_for_log(headers)
+    if safe_headers:
+        active_logger.info("Request headers: %s", safe_headers)
+
+
 def request_with_auth_retry(
     *,
     url: str,
@@ -46,6 +87,13 @@ def request_with_auth_retry(
 
     while True:
         # A single execution path is used for all methods/endpoints to keep retry behavior consistent;
+        log_outgoing_http_request(
+            active_logger=active_logger,
+            method=method,
+            url=url,
+            params=params,
+            headers=request_headers,
+        )
         response = requests.request(
             method=method.upper(),
             url=url,
