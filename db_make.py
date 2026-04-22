@@ -18,7 +18,7 @@ logger = configure_logging(__name__)
 # FUNCTION
 #
 ########################################################################################################################
-def ensure_duckdb_exists(path: str = "data/nivel_duck.db") -> str:
+def ensure_duckdb_exists(path: str = "data/hidroweb_scrapping.db") -> str:
     """
     Ensure DuckDB file and a bootstrap metadata table exist.
     """

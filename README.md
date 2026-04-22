@@ -9,7 +9,7 @@ Os scripts dividem as datas de coletas (nos endpoints na qual a mesma é relevan
 
 ## 1) Endpoints comuns (sem station code)
 
-Observação: ao iniciar qualquer execução, o script garante automaticamente a criação do arquivo DuckDB (`data/nivel_duck.db`) quando ele ainda não existir.
+Observação: ao iniciar qualquer execução, o script garante automaticamente a criação do arquivo DuckDB (`data/hidroweb_scrapping.db`) quando ele ainda não existir.
 
 Executa todos os endpoints comuns:
 
@@ -50,6 +50,17 @@ Controle do modo de escrita no banco:
 
 - `--inplace`: sobrescreve a tabela de destino (padrão);
 - `--no-inplace`: faz append na tabela de destino;
+
+## 3) Consultas na base de dados;
+Para visualizar a base de dados no terminal, usar o 'duckdb-cli'. Na pasta do projeto, ativar o venv e rodar duckdb no path da base
+`source ./venv/bin/activate`
+`duckdb data/hidroweb_scrapping.db`
+
+Para executar consultas rápidas na base de dados localizada em ./data/hidroweb_scrapping.db, instanciar a classe de interação em 'db_handler.py' e usar o método '.run()':
+`python3 -c "from db_handler import DBConnection; db = DBConnection(); print(db.run(query='SELECT * FROM HidroBacia')['result'])"`
+
+Para salvar esses resultados em '.csv', adicionar o '.to_csv()' no comando anterior:
+`python3 -c "from db_handler import DBConnection; db = DBConnection(); db.run('SELECT * FROM table_name')['result'].to_csv('exemple.csv', index=False)"`
 
 # Mapeamento dos Endpoints:
 * "/EstacoesTelemetricas/HidrosatSerieDados/v1": Séries das estações virtuais (HidroSat). Deve ser informado o código de estação (consulta HidroSatInventarioEstacoes) e período (limitado a 366 dias por requisição).

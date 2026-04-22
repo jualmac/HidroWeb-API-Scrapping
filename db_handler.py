@@ -21,7 +21,7 @@ logger = configure_logging(__name__)
 #
 ########################################################################################################################
 class DBConnection:
-    def __init__(self, path: str = "data/nivel_duck.db"):
+    def __init__(self, path: str = "data/hidroweb_scrapping.db"):
         self.path = path
         self.connection = self.connect()
 
