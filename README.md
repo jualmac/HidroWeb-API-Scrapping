@@ -56,6 +56,9 @@ Para visualizar a base de dados no terminal, usar o 'duckdb-cli'. Na pasta do pr
 `source ./venv/bin/activate`
 `duckdb data/hidroweb_scrapping.db`
 
+Usar .help para obter a lista de comandos. Queries em SQL podem ser executadas diretamente no duckdb-cli, sempre seguidas de um semicolon ';', e.g.:
+`SELECT * FROM table_name;`
+
 Para executar consultas rápidas na base de dados localizada em ./data/hidroweb_scrapping.db, instanciar a classe de interação em 'db_handler.py' e usar o método '.run()':
 `python3 -c "from db_handler import DBConnection; db = DBConnection(); print(db.run(query='SELECT * FROM HidroBacia')['result'])"`
 
