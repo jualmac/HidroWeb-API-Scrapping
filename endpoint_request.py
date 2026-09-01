@@ -15,7 +15,7 @@ from typing import Any
 from datetime import datetime, timedelta
 from typing import Callable, Iterator
 
-from auth import get_auth
+from auth import get_auth, request_with_outage_guard
 from db_handler import DBConnection
 from util import START_DATE, END_DATE, BASE_URL, configure_logging
 
@@ -94,9 +94,10 @@ def request_with_auth_retry(
             params=params,
             headers=request_headers,
         )
-        response = requests.request(
-            method=method.upper(),
-            url=url,
+        # 503/504 are retried with a sleep inside the guard; persistent outage aborts the process;
+        response = request_with_outage_guard(
+            method.upper(),
+            url,
             headers=request_headers,
             params=params,
             timeout=timeout,
